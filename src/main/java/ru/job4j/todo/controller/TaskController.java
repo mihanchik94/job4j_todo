@@ -5,7 +5,10 @@ import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.TaskService;
 
 @ThreadSafe
@@ -33,7 +36,20 @@ public class TaskController {
         return "tasks/doneTasks";
     }
 
+    @GetMapping("/createNewTask")
+    public String creationOfTaskPage() {
+        return "tasks/create";
+    }
 
-
-
+    @PostMapping("/createNewTask")
+    public String createTask(@ModelAttribute Task task, Model model) {
+        task.setDone(false);
+        try {
+            taskService.save(task);
+            return "redirect:/tasks/all";
+        } catch (Exception e) {
+            model.addAttribute("message", e.getMessage());
+            return "errors/404";
+        }
+    }
 }

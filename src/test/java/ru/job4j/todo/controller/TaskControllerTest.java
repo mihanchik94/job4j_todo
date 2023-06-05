@@ -9,6 +9,7 @@ import ru.job4j.todo.service.TaskService;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -68,5 +69,32 @@ class TaskControllerTest {
 
         assertThat(view).isEqualTo("tasks/doneTasks");
         assertThat(actualTasks).isEqualTo(expectedTasks);
+    }
+
+    @Test
+    public void whenPostCreateTaskSuccessfullyThenReturnPageWithAllTasks() {
+        Task savedTask = new Task(1, "task_1", true);
+
+        when(taskService.save(savedTask)).thenReturn(savedTask);
+
+        ConcurrentModel model = new ConcurrentModel();
+        String view = taskController.createTask(savedTask, model);
+
+        assertThat(view).isEqualTo("redirect:/tasks/all");
+    }
+
+    @Test
+    public void whenPostCreateTaskFailedThenReturnPageWith404Error() {
+        Task savedTask = new Task(1, "task_1", true);
+        Exception expectedException = new RuntimeException("Some exception");
+
+        when(taskService.save(any())).thenThrow(expectedException);
+
+        ConcurrentModel model = new ConcurrentModel();
+        String view = taskController.createTask(savedTask, model);
+        Object message = model.getAttribute("message");
+
+        assertThat(view).isEqualTo("errors/404");
+        assertThat(message).isEqualTo(expectedException.getMessage());
     }
 }
