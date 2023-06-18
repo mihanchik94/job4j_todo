@@ -104,11 +104,11 @@ public class TaskStore implements TaskRepository {
         boolean result = false;
         try {
             session.beginTransaction();
-            result = session.createQuery("update Task set id = :fId, description = :fDescription, created = :fCreated, done = :fDone")
-                    .setParameter("fId", task.getId())
+            result = session.createQuery("update Task set description = :fDescription, created = :fCreated, done = :fDone where id = :fId")
                     .setParameter("fDescription", task.getDescription())
                     .setParameter("fCreated", task.getCreated())
                     .setParameter("fDone", task.isDone())
+                    .setParameter("fId", task.getId())
                     .executeUpdate() > 0;
             session.getTransaction().commit();
         } catch (Exception e) {

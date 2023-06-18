@@ -38,7 +38,7 @@
                 <tbody>
                 <tr th:each="task : ${doneTasks}">
                     <td th:text="${task.id}"></td>
-                    <td th:text="${task.description}"></td>
+                    <td><a th:text="${task.description}" th:href="@{/tasks/{taskId}(taskId = ${task.id})}"></a></td>
                     <td th:text="${task.created}"></td>
                     <td>
                         <div class="d-flex" th:if="${task.done == false}"><p>Новая</p></div>
