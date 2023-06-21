@@ -36,7 +36,7 @@
                 <div class="col-6"></div>
                 <div class="col-6">
                     <div class="row">
-                        <div class="col-4"><a class="btn btn-danger w-100" th:href="@{/tasks/all}">Отмена</a> </div>
+                        <div class="col-4"><a class="btn btn-primary w-100" th:href="@{/tasks/changeTaskStatus/{id}(id=${task.id})}"><div th:if="${task.done == false}">Завершить</div><div th:if="${task.done == true}">Взять в работу</div></a></div>
                         <div class="col-4"><a class="btn btn-danger w-100" th:href="@{/tasks/delete/{id}(id=${task.id})}">Удалить</a></div>
                         <div class="col-4"><button class="btn btn-primary w-100" type="submit">Редактировать</button> </div>
                     </div>

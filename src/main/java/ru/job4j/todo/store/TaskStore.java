@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ public class TaskStore implements TaskRepository {
         List<Task> result = new ArrayList<>();
         try {
             session.beginTransaction();
-            result = session.createQuery("from Task", Task.class).list();
+            result = session.createQuery("from Task order by id", Task.class).list();
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
@@ -39,7 +40,7 @@ public class TaskStore implements TaskRepository {
         List<Task> result = new ArrayList<>();
         try {
             session.beginTransaction();
-            result = session.createQuery("from Task t where t.done = false", Task.class).list();
+            result = session.createQuery("from Task t where t.done = false order by id", Task.class).list();
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
@@ -55,7 +56,7 @@ public class TaskStore implements TaskRepository {
         List<Task> result = new ArrayList<>();
         try {
             session.beginTransaction();
-            result = session.createQuery("from Task t where t.done = true", Task.class).list();
+            result = session.createQuery("from Task t where t.done = true order by id", Task.class).list();
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
@@ -104,10 +105,9 @@ public class TaskStore implements TaskRepository {
         boolean result = false;
         try {
             session.beginTransaction();
-            result = session.createQuery("update Task set description = :fDescription, created = :fCreated, done = :fDone where id = :fId")
+            result = session.createQuery("update Task set description = :fDescription, created = :fCreated where id = :fId")
                     .setParameter("fDescription", task.getDescription())
                     .setParameter("fCreated", task.getCreated())
-                    .setParameter("fDone", task.isDone())
                     .setParameter("fId", task.getId())
                     .executeUpdate() > 0;
             session.getTransaction().commit();
@@ -136,4 +136,22 @@ public class TaskStore implements TaskRepository {
         }
         return result;
     }
-}
+
+    @Override
+    public boolean changeDone(Task task) {
+        Session session = sf.openSession();
+        boolean result = false;
+        try {
+            session.beginTransaction();
+            result = session.createQuery("update Task set done = case when done = true then false else true end where id = :fId")
+                    .setParameter("fId", task.getId())
+                    .executeUpdate() > 0;
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+ }

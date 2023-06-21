@@ -87,4 +87,19 @@ public class TaskController {
         }
         return "redirect:/tasks/all";
     }
+
+    @GetMapping("/changeTaskStatus/{id}")
+    public String changeTaskStatus(@ModelAttribute Task task, Model model) {
+        try {
+            boolean isChanged = taskService.changeDone(task);
+            if (!isChanged) {
+                model.addAttribute("message", "Задача с указанным id не найдена");
+                return "errors/404";
+            }
+            return "redirect:/tasks/all";
+        } catch (Exception e) {
+            model.addAttribute("message", e.getMessage());
+            return "errors/404";
+        }
+    }
 }
