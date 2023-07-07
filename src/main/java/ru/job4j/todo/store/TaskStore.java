@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ public class TaskStore implements TaskRepository {
         List<Task> result = new ArrayList<>();
         try {
             session.beginTransaction();
-            result = session.createQuery("from Task", Task.class).list();
+            result = session.createQuery("from Task order by id", Task.class).list();
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
@@ -39,7 +40,7 @@ public class TaskStore implements TaskRepository {
         List<Task> result = new ArrayList<>();
         try {
             session.beginTransaction();
-            result = session.createQuery("from Task t where t.done = :taskStatus", Task.class)
+            result = session.createQuery("from Task t where t.done = :taskStatus order by id", Task.class)
                     .setParameter("taskStatus", status)
                     .list();
             session.getTransaction().commit();
@@ -115,4 +116,22 @@ public class TaskStore implements TaskRepository {
         }
         return result;
     }
-}
+
+    @Override
+    public boolean changeDone(Task task) {
+        Session session = sf.openSession();
+        boolean result = false;
+        try {
+            session.beginTransaction();
+            result = session.createQuery("update Task set done = true where id = :fId")
+                    .setParameter("fId", task.getId())
+                    .executeUpdate() > 0;
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+ }
