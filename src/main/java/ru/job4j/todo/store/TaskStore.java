@@ -4,11 +4,12 @@ import lombok.AllArgsConstructor;
 import net.jcip.annotations.ThreadSafe;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,7 @@ import java.util.Optional;
 @Repository
 @AllArgsConstructor
 public class TaskStore implements TaskRepository {
+    private static final Logger LOG = LoggerFactory.getLogger(TaskStore.class.getName());
     private final SessionFactory sf;
 
     @Override
@@ -27,6 +29,7 @@ public class TaskStore implements TaskRepository {
             result = session.createQuery("from Task order by id", Task.class).list();
             session.getTransaction().commit();
         } catch (Exception e) {
+            LOG.error("Exception when find all tasks ", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
@@ -45,6 +48,7 @@ public class TaskStore implements TaskRepository {
                     .list();
             session.getTransaction().commit();
         } catch (Exception e) {
+            LOG.error("Exception when find tasks ", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
@@ -60,6 +64,7 @@ public class TaskStore implements TaskRepository {
             session.save(task);
             session.getTransaction().commit();
         } catch (Exception e) {
+            LOG.error("Exception when save task ", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
@@ -78,6 +83,7 @@ public class TaskStore implements TaskRepository {
                     .uniqueResultOptional();
             session.getTransaction().commit();
         } catch (Exception e) {
+            LOG.error("Exception when find task by id ", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
@@ -93,6 +99,7 @@ public class TaskStore implements TaskRepository {
             session.update(task);
             session.getTransaction().commit();
         } catch (Exception e) {
+            LOG.error("Exception when update task ", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
@@ -110,6 +117,7 @@ public class TaskStore implements TaskRepository {
                     .executeUpdate() > 0;
             session.getTransaction().commit();
         } catch (Exception e) {
+            LOG.error("Exception when delete task by id ", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
@@ -128,6 +136,7 @@ public class TaskStore implements TaskRepository {
                     .executeUpdate() > 0;
             session.getTransaction().commit();
         } catch (Exception e) {
+            LOG.error("Exception when change status of task ", e);
             session.getTransaction().rollback();
         } finally {
             session.close();
