@@ -19,19 +19,19 @@ public class TaskController {
 
     @GetMapping("/all")
     public String allTasksPage(Model model) {
-        model.addAttribute("tasks",taskService.findAll());
+        model.addAttribute("tasks", taskService.findAll());
         return "tasks/tasks";
     }
 
     @GetMapping("/new")
     public String newTasksPage(Model model) {
-        model.addAttribute("newTasks",taskService.findTasks(false));
+        model.addAttribute("newTasks", taskService.findTasks(false));
         return "tasks/newTasks";
     }
 
     @GetMapping("/done")
     public String doneTasksPage(Model model) {
-        model.addAttribute("doneTasks",taskService.findTasks(true));
+        model.addAttribute("doneTasks", taskService.findTasks(true));
         return "tasks/doneTasks";
     }
 
@@ -41,15 +41,10 @@ public class TaskController {
     }
 
     @PostMapping("/createNewTask")
-    public String createTask(@ModelAttribute Task task, Model model) {
+    public String createTask(@ModelAttribute Task task) {
         task.setDone(false);
-        try {
-            taskService.save(task);
-            return "redirect:/tasks/all";
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
-            return "errors/404";
-        }
+        taskService.save(task);
+        return "redirect:/tasks/all";
     }
 
     @GetMapping("{id}")
@@ -65,13 +60,12 @@ public class TaskController {
 
     @PostMapping("/update")
     public String update(@ModelAttribute Task task, Model model) {
-        try {
-            taskService.update(task);
-            return "redirect:/tasks/all";
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
+        boolean isUpdated = taskService.update(task);
+        if (!isUpdated) {
+            model.addAttribute("message", "Задача с указанным id не найдена");
             return "errors/404";
         }
+        return "redirect:/tasks/all";
     }
 
     @GetMapping("/delete/{id}")
@@ -86,16 +80,11 @@ public class TaskController {
 
     @GetMapping("/changeTaskStatus/{id}")
     public String changeTaskStatus(@ModelAttribute Task task, Model model) {
-        try {
-            boolean isChanged = taskService.changeDone(task);
-            if (!isChanged) {
-                model.addAttribute("message", "Задача с указанным id не найдена");
-                return "errors/404";
-            }
-            return "redirect:/tasks/all";
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
+        boolean isChanged = taskService.changeDone(task);
+        if (!isChanged) {
+            model.addAttribute("message", "Задача с указанным id не найдена");
             return "errors/404";
         }
+        return "redirect:/tasks/all";
     }
 }

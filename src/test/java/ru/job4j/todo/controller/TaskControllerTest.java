@@ -79,25 +79,9 @@ class TaskControllerTest {
 
         when(taskService.save(savedTask)).thenReturn(savedTask);
 
-        ConcurrentModel model = new ConcurrentModel();
-        String view = taskController.createTask(savedTask, model);
+        String view = taskController.createTask(savedTask);
 
         assertThat(view).isEqualTo("redirect:/tasks/all");
-    }
-
-    @Test
-    public void whenPostCreateTaskFailedThenReturnPageWith404Error() {
-        Task savedTask = new Task(1, "task_1", "desc_1", true);
-        Exception expectedException = new RuntimeException("Some exception");
-
-        when(taskService.save(any())).thenThrow(expectedException);
-
-        ConcurrentModel model = new ConcurrentModel();
-        String view = taskController.createTask(savedTask, model);
-        Object message = model.getAttribute("message");
-
-        assertThat(view).isEqualTo("errors/404");
-        assertThat(message).isEqualTo(expectedException.getMessage());
     }
 
     @Test
@@ -130,10 +114,27 @@ class TaskControllerTest {
     public void whenPostUpdateTaskThenReturnPageWithAllTasks() {
         Task updatedTask = new Task(1, "task_1", "desc_1", true);
 
+        when(taskService.update(any())).thenReturn(true);
+
         ConcurrentModel model = new ConcurrentModel();
         String view = taskController.update(updatedTask, model);
 
         assertThat(view).isEqualTo("redirect:/tasks/all");
+    }
+
+    @Test
+    public void whenPostUpdateTaskIdFailedThenReturnPageWith404Error() {
+        Task updatedTask = new Task(1, "task_1", "desc_1", true);
+        String expectedMessage = "Задача с указанным id не найдена";
+
+        when(taskService.update(any())).thenReturn(false);
+
+        ConcurrentModel model = new ConcurrentModel();
+        String view = taskController.update(updatedTask, model);
+        Object actualMessage = model.getAttribute("message");
+
+        assertThat(view).isEqualTo("errors/404");
+        assertThat(actualMessage).isEqualTo(expectedMessage);
     }
 
     @Test
@@ -188,20 +189,5 @@ class TaskControllerTest {
 
         assertThat(view).isEqualTo("errors/404");
         assertThat(actualMessage).isEqualTo(expectedMessage);
-    }
-
-    @Test
-    public void whenRequestChangeTaskStatusAndExceptionThenReturnPageWith404Error() {
-        Task changedStatusTask = new Task(1, "task_1", "desc_1", true);
-        Exception expectedException = new RuntimeException("Some exception");
-
-        when(taskService.changeDone(any())).thenThrow(expectedException);
-
-        ConcurrentModel model = new ConcurrentModel();
-        String view = taskController.changeTaskStatus(changedStatusTask, model);
-        Object actualMessage = model.getAttribute("message");
-
-        assertThat(view).isEqualTo("errors/404");
-        assertThat(actualMessage).isEqualTo(expectedException.getMessage());
     }
 }

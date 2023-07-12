@@ -36,8 +36,8 @@ public class SimpleTaskService implements TaskService {
     }
 
     @Override
-    public void update(Task task) {
-        taskStore.update(task);
+    public boolean update(Task task) {
+        return taskStore.update(task);
     }
 
     @Override

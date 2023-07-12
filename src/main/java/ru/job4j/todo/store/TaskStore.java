@@ -92,11 +92,17 @@ public class TaskStore implements TaskRepository {
     }
 
     @Override
-    public void update(Task task) {
+    public boolean update(Task task) {
         Session session = sf.openSession();
+        boolean result = false;
         try {
             session.beginTransaction();
-            session.update(task);
+            result = session.createQuery("update Task t set t.title = :fTitle, t.description = :fDescription, t.done = :fDone where t.id = :fId")
+                    .setParameter("fTitle", task.getTitle())
+                    .setParameter("fDescription", task.getDescription())
+                    .setParameter("fDone", task.isDone())
+                    .setParameter("fId", task.getId())
+                    .executeUpdate() > 0;
             session.getTransaction().commit();
         } catch (Exception e) {
             LOG.error("Exception when update task ", e);
@@ -104,6 +110,7 @@ public class TaskStore implements TaskRepository {
         } finally {
             session.close();
         }
+        return result;
     }
 
     @Override

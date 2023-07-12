@@ -10,7 +10,7 @@ public interface TaskRepository {
     List<Task> findTasks(boolean status);
     Task save(Task task);
     Optional<Task> findById(int id);
-    void update(Task task);
+    boolean update(Task task);
     boolean deleteById(int id);
     boolean changeDone(Task task);
 }
