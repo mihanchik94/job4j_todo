@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+
     <!--  Зависимости Bootstrap-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
 
-    <title>Job4j ToDoList - Ошибка</title>
+    <title>Job4j ToDoList - Регистрация</title>
 </head>
 <body>
 <div class="container-fluid p-0">
@@ -21,20 +22,29 @@
                     <a class="nav-item nav-link" th:href="@{/tasks/new}">Новые задачи</a>
                     <a class="nav-item nav-link" th:href="@{/tasks/done}">Выполненные задачи</a>
                 </div>
-                <div class="d-flex" th:if="${user.name == 'Гость'}">
-                    <a class="nav-link text-secondary me-3" th:href="@{/users/register}">Регистрация</a>
+                <div class="d-flex">
+                    <a class="nav-link text-light me-3" th:href="@{/users/register}">Регистрация</a>
                     <a class="nav-link text-secondary" th:href="@{/users/login}">Войти</a>
-                </div>
-                <div class="d-flex" th:if="${user.name != 'Гость'}">
-                    <a class="nav-link text-secondary me-3" href="#" th:text="${user.name}"></a>
-                    <a class="nav-link text-secondary" th:href="@{/users/logout}">Выйти</a>
                 </div>
             </div>
         </div>
     </nav>
     <div class="container">
-        <h4 class="mt-3">Произошла ошибка</h4>
-        <p class="text-danger" th:text="${message}"></p>
+        <form class="mt-3" th:action="@{/users/register}" method="post">
+            <div class="mb-3">
+                <label for="name" class="form-label"><b>Имя</b></label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Иван" required>
+            </div>
+            <div class="mb-3">
+                <label for="login" class="form-label"><b>Логин (почта)</b></label>
+                <input type="email" class="form-control" id="login" name="login" placeholder="ivan@mail.ru" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label"><b>Пароль</b></label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
     </div>
 </div>
 </body>
