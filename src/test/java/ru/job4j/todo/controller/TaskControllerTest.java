@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.ConcurrentModel;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.TaskService;
 
 import java.util.List;
@@ -27,9 +28,9 @@ class TaskControllerTest {
 
     @Test
     public void whenRequestAllTasksPageThenReturnPageWithAllTasks() {
-        Task task1 = new Task(1, "task_1", "desc_1", true);
-        Task task2 = new Task(2, "task_2", "desc_2", false);
-        Task task3 = new Task(3, "task_3", "desc_3", false);
+        Task task1 = new Task(1, "task_1", "desc_1", true, new User());
+        Task task2 = new Task(2, "task_2", "desc_2", false, new User());
+        Task task3 = new Task(3, "task_3", "desc_3", false, new User());
         List<Task> expectedTasks = List.of(task1, task2, task3);
 
         when(taskService.findAll()).thenReturn(expectedTasks);
@@ -44,8 +45,8 @@ class TaskControllerTest {
 
     @Test
     public void whenRequestNewTasksPageThenReturnPageWithNewTasks() {
-        Task task1 = new Task(2, "task_2", "desc_2", false);
-        Task task2 = new Task(3, "task_3", "desc_3", false);
+        Task task1 = new Task(2, "task_2", "desc_2", false, new User());
+        Task task2 = new Task(3, "task_3", "desc_3", false, new User());
         List<Task> expectedTasks = List.of(task1, task2);
 
         when(taskService.findTasks(false)).thenReturn(expectedTasks);
@@ -60,7 +61,7 @@ class TaskControllerTest {
 
     @Test
     public void whenRequestDoneTasksPageThenReturnPageWithDoneTasks() {
-        Task task1 = new Task(1, "task_1", "desc_1", true);
+        Task task1 = new Task(1, "task_1", "desc_1", true, new User());
         List<Task> expectedTasks = List.of(task1);
 
         when(taskService.findTasks(true)).thenReturn(expectedTasks);
@@ -75,18 +76,18 @@ class TaskControllerTest {
 
     @Test
     public void whenPostCreateTaskSuccessfullyThenReturnPageWithAllTasks() {
-        Task savedTask = new Task(1, "task_1", "desc_1", true);
+        Task savedTask = new Task(1, "task_1", "desc_1", true, new User());
 
         when(taskService.save(savedTask)).thenReturn(savedTask);
 
-        String view = taskController.createTask(savedTask);
+        String view = taskController.createTask(savedTask, new User());
 
         assertThat(view).isEqualTo("redirect:/tasks/all");
     }
 
     @Test
     public void whenRequestGetByIdSuccessfullyThenReturnPageWithOneTasks() {
-        Task task1 = new Task(1, "task_1", "desc_1", true);
+        Task task1 = new Task(1, "task_1", "desc_1", true, new User());
 
         when(taskService.findById(anyInt())).thenReturn(Optional.of(task1));
 
@@ -100,7 +101,7 @@ class TaskControllerTest {
 
     @Test
     public void whenRequestGetByIdFailedThenReturnPageWith404Error() {
-        Task task1 = new Task(1, "task_1", "desc_1", true);
+        Task task1 = new Task(1, "task_1", "desc_1", true, new User());
 
         when(taskService.findById(anyInt())).thenReturn(Optional.empty());
 
@@ -112,25 +113,25 @@ class TaskControllerTest {
 
     @Test
     public void whenPostUpdateTaskThenReturnPageWithAllTasks() {
-        Task updatedTask = new Task(1, "task_1", "desc_1", true);
+        Task updatedTask = new Task(1, "task_1", "desc_1", true, new User());
 
         when(taskService.update(any())).thenReturn(true);
 
         ConcurrentModel model = new ConcurrentModel();
-        String view = taskController.update(updatedTask, model);
+        String view = taskController.update(updatedTask, model, new User());
 
         assertThat(view).isEqualTo("redirect:/tasks/all");
     }
 
     @Test
     public void whenPostUpdateTaskIdFailedThenReturnPageWith404Error() {
-        Task updatedTask = new Task(1, "task_1", "desc_1", true);
+        Task updatedTask = new Task(1, "task_1", "desc_1", true, new User());
         String expectedMessage = "Задача с указанным id не найдена";
 
         when(taskService.update(any())).thenReturn(false);
 
         ConcurrentModel model = new ConcurrentModel();
-        String view = taskController.update(updatedTask, model);
+        String view = taskController.update(updatedTask, model, new User());
         Object actualMessage = model.getAttribute("message");
 
         assertThat(view).isEqualTo("errors/404");
@@ -139,7 +140,7 @@ class TaskControllerTest {
 
     @Test
     public void whenRequestDeleteByIdSuccessfullyThenReturnPageWithAllTasks() {
-        Task deletedTask = new Task(1, "task_1", "desc_1", true);
+        Task deletedTask = new Task(1, "task_1", "desc_1", true, new User());
 
         when(taskService.deleteById(anyInt())).thenReturn(true);
 
@@ -151,7 +152,7 @@ class TaskControllerTest {
 
     @Test
     public void whenRequestDeleteByIdFailedThenReturnPageWith404Error() {
-        Task deletedTask = new Task(1, "task_1", "desc_1", true);
+        Task deletedTask = new Task(1, "task_1", "desc_1", true, new User());
         String expectedMessage = "Задача с указанным id не найдена";
 
         when(taskService.deleteById(anyInt())).thenReturn(false);
@@ -166,7 +167,7 @@ class TaskControllerTest {
 
     @Test
     public void whenRequestChangeTaskStatusSuccessfullyThenReturnPageWithAllTasks() {
-        Task changedStatusTask = new Task(1, "task_1", "desc_1", true);
+        Task changedStatusTask = new Task(1, "task_1", "desc_1", true, new User());
 
         when(taskService.changeDone(any())).thenReturn(true);
 
@@ -178,7 +179,7 @@ class TaskControllerTest {
 
     @Test
     public void whenRequestChangeTaskStatusFailedThenReturnPageWith404Error() {
-        Task changedStatusTask = new Task(1, "task_1", "desc_1", true);
+        Task changedStatusTask = new Task(1, "task_1", "desc_1", true, new User());
         String expectedMessage = "Задача с указанным id не найдена";
 
         when(taskService.changeDone(any())).thenReturn(false);

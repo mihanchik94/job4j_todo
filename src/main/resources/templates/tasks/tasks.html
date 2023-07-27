@@ -41,6 +41,7 @@
                     <th scope="row">Наименование задачи</th>
                     <th scope="row">Дата создания задачи</th>
                     <th scope="row">Статус задачи</th>
+                    <th scope="row">Имя пользователя</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -51,6 +52,7 @@
                     <td>
                         <div class="d-flex" th:if="${task.done == false}"><p>В работе</p></div>
                         <div class="d-flex" th:if="${task.done == true}"><p>Выполненная</p></div>
+                    <td th:text="${task.user.name}"></td>
                 </tr>
                 </tbody>
             </table>
