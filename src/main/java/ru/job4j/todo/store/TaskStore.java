@@ -18,12 +18,12 @@ public class TaskStore implements TaskRepository {
 
     @Override
     public List<Task> findAll() {
-        return crudRepository.query("from Task order by id", Task.class);
+        return crudRepository.query("from Task t join fetch t.priority order by t.id", Task.class);
     }
 
     @Override
     public List<Task> findTasks(boolean status) {
-        return crudRepository.query("from Task t where t.done = :taskStatus order by id", Task.class,
+        return crudRepository.query("from Task t join fetch t.priority where t.done = :taskStatus order by t.id", Task.class,
                 Map.of("taskStatus", status));
     }
 
@@ -35,7 +35,7 @@ public class TaskStore implements TaskRepository {
 
     @Override
     public Optional<Task> findById(int id) {
-        return crudRepository.optional("from Task t where t.id = :fId", Task.class,
+        return crudRepository.optional("from Task t join fetch t.priority where t.id = :fId", Task.class,
                 Map.of("fId", id));
     }
 

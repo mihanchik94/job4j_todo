@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.ui.ConcurrentModel;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
 import java.util.List;
@@ -18,12 +19,15 @@ import static org.mockito.Mockito.when;
 
 class TaskControllerTest {
     private TaskService taskService;
+    private PriorityService priorityService;
     private TaskController taskController;
+
 
     @BeforeEach
     public void initServices() {
         taskService = mock(TaskService.class);
-        taskController = new TaskController(taskService);
+        priorityService = mock(PriorityService.class);
+        taskController = new TaskController(taskService, priorityService);
     }
 
     @Test

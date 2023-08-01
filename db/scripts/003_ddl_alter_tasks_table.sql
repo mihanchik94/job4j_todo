@@ -1,1 +1,1 @@
-ALTER TABLE tasks add column user_id int NOT NULL references users(id);
+ALTER TABLE tasks add column user_id int references users(id);
