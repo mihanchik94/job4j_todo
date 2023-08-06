@@ -7,9 +7,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
+import java.util.List;
 import java.util.Optional;
 
 @ThreadSafe
@@ -19,6 +21,7 @@ import java.util.Optional;
 public class TaskController {
     private final TaskService taskService;
     private final PriorityService priorityService;
+    private final CategoryService categoryService;
 
     @GetMapping("/all")
     public String allTasksPage(Model model) {
@@ -41,13 +44,15 @@ public class TaskController {
     @GetMapping("/createNewTask")
     public String creationOfTaskPage(Model model) {
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.getAll());
         return "tasks/create";
     }
 
     @PostMapping("/createNewTask")
-    public String createTask(@ModelAttribute Task task, @SessionAttribute User user) {
+    public String createTask(@ModelAttribute Task task,  @RequestParam List<Integer> categoryList, @SessionAttribute User user) {
         task.setUser(user);
         task.setDone(false);
+        task.getCategories().addAll(categoryService.getGroupOfCategories(categoryList));
         taskService.save(task);
         return "redirect:/tasks/all";
     }
@@ -61,12 +66,14 @@ public class TaskController {
         }
         model.addAttribute("task", taskOptional.get());
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.getAll());
         return "tasks/one";
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Task task, Model model, @SessionAttribute User user) {
+    public String update(@ModelAttribute Task task, Model model, @RequestParam List<Integer> categoryList, @SessionAttribute User user) {
         task.setUser(user);
+        task.getCategories().addAll(categoryService.getGroupOfCategories(categoryList));
         boolean isUpdated = taskService.update(task);
         if (!isUpdated) {
             model.addAttribute("message", "Задача с указанным id не найдена");

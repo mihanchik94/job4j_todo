@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.ui.ConcurrentModel;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.when;
 class TaskControllerTest {
     private TaskService taskService;
     private PriorityService priorityService;
+    private CategoryService categoryService;
     private TaskController taskController;
 
 
@@ -27,7 +29,8 @@ class TaskControllerTest {
     public void initServices() {
         taskService = mock(TaskService.class);
         priorityService = mock(PriorityService.class);
-        taskController = new TaskController(taskService, priorityService);
+        categoryService = mock(CategoryService.class);
+        taskController = new TaskController(taskService, priorityService, categoryService);
     }
 
     @Test
@@ -84,7 +87,7 @@ class TaskControllerTest {
 
         when(taskService.save(savedTask)).thenReturn(savedTask);
 
-        String view = taskController.createTask(savedTask, new User());
+        String view = taskController.createTask(savedTask, List.of(1), new User());
 
         assertThat(view).isEqualTo("redirect:/tasks/all");
     }
@@ -122,7 +125,7 @@ class TaskControllerTest {
         when(taskService.update(any())).thenReturn(true);
 
         ConcurrentModel model = new ConcurrentModel();
-        String view = taskController.update(updatedTask, model, new User());
+        String view = taskController.update(updatedTask, model, List.of(1), new User());
 
         assertThat(view).isEqualTo("redirect:/tasks/all");
     }
@@ -135,7 +138,7 @@ class TaskControllerTest {
         when(taskService.update(any())).thenReturn(false);
 
         ConcurrentModel model = new ConcurrentModel();
-        String view = taskController.update(updatedTask, model, new User());
+        String view = taskController.update(updatedTask, model, List.of(1), new User());
         Object actualMessage = model.getAttribute("message");
 
         assertThat(view).isEqualTo("errors/404");
