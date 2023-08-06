@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TaskService {
-    List<Task> findAll();
-    List<Task> findTasks(boolean status);
+    List<Task> findAll(String zoneId);
+    List<Task> findTasks(boolean status, String zoneId);
     Task save(Task task);
     Optional<Task> findById(int id);
     boolean update(Task task);

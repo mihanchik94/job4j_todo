@@ -9,16 +9,17 @@ import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class TaskControllerTest {
+    private HttpSession session;
     private TaskService taskService;
     private PriorityService priorityService;
     private CategoryService categoryService;
@@ -27,6 +28,7 @@ class TaskControllerTest {
 
     @BeforeEach
     public void initServices() {
+        session = mock(HttpSession.class);
         taskService = mock(TaskService.class);
         priorityService = mock(PriorityService.class);
         categoryService = mock(CategoryService.class);
@@ -40,10 +42,10 @@ class TaskControllerTest {
         Task task3 = new Task(3, "task_3", "desc_3", false, new User());
         List<Task> expectedTasks = List.of(task1, task2, task3);
 
-        when(taskService.findAll()).thenReturn(expectedTasks);
+        when(taskService.findAll(any())).thenReturn(expectedTasks);
 
         ConcurrentModel model = new ConcurrentModel();
-        String view = taskController.allTasksPage(model);
+        String view = taskController.allTasksPage(model, session);
         Object actualTasks = model.getAttribute("tasks");
 
         assertThat(view).isEqualTo("tasks/tasks");
@@ -56,10 +58,10 @@ class TaskControllerTest {
         Task task2 = new Task(3, "task_3", "desc_3", false, new User());
         List<Task> expectedTasks = List.of(task1, task2);
 
-        when(taskService.findTasks(false)).thenReturn(expectedTasks);
+        when(taskService.findTasks(anyBoolean(), anyString())).thenReturn(expectedTasks);
 
         ConcurrentModel model = new ConcurrentModel();
-        String view = taskController.newTasksPage(model);
+        String view = taskController.newTasksPage(model, session);
         Object actualTasks = model.getAttribute("newTasks");
 
         assertThat(view).isEqualTo("tasks/newTasks");
@@ -71,10 +73,10 @@ class TaskControllerTest {
         Task task1 = new Task(1, "task_1", "desc_1", true, new User());
         List<Task> expectedTasks = List.of(task1);
 
-        when(taskService.findTasks(true)).thenReturn(expectedTasks);
+        when(taskService.findTasks(anyBoolean(), anyString())).thenReturn(expectedTasks);
 
         ConcurrentModel model = new ConcurrentModel();
-        String view = taskController.doneTasksPage(model);
+        String view = taskController.doneTasksPage(model, session);
         Object actualTasks = model.getAttribute("doneTasks");
 
         assertThat(view).isEqualTo("tasks/doneTasks");

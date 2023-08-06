@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.store.TaskRepository;
 
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 @ThreadSafe
 @Service
@@ -16,13 +18,17 @@ public class SimpleTaskService implements TaskService {
     private final TaskRepository taskStore;
 
     @Override
-    public List<Task> findAll() {
-        return taskStore.findAll();
+    public List<Task> findAll(String zoneId) {
+        List<Task> result = taskStore.findAll();
+        shiftTimeZone(result, zoneId);
+        return result;
     }
 
     @Override
-    public List<Task> findTasks(boolean status) {
-        return taskStore.findTasks(status);
+    public List<Task> findTasks(boolean status, String zoneId) {
+        List<Task> result = taskStore.findTasks(status);
+        shiftTimeZone(result, zoneId);
+        return result;
     }
 
     @Override
@@ -48,5 +54,14 @@ public class SimpleTaskService implements TaskService {
     @Override
     public boolean changeDone(Task task) {
         return taskStore.changeDone(task);
+    }
+
+    private void shiftTimeZone(List<Task> tasks, String zoneId) {
+        tasks.forEach(task -> task.setCreated(
+                task.getCreated()
+                        .atZone(TimeZone.getDefault().toZoneId())
+                        .withZoneSameInstant(ZoneId.of(zoneId))
+                        .toLocalDateTime()
+        ));
     }
 }

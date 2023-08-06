@@ -22,7 +22,7 @@ public class Task {
     private int id;
     private String title;
     private String description;
-    private final LocalDateTime created = LocalDateTime.now();
+    private LocalDateTime created = LocalDateTime.now();
     private boolean done;
 
     @ManyToOne
@@ -47,5 +47,9 @@ public class Task {
         this.description = description;
         this.done = done;
         this.user = user;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
     }
 }

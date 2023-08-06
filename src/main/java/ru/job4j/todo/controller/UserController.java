@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.UserService;
 
@@ -28,7 +25,8 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute User user, Model model, HttpServletRequest request) {
+    public String register(@ModelAttribute User user, @RequestParam("timezones") String zoneId, Model model, HttpServletRequest request) {
+        user.setTimezone(zoneId);
         Optional<User> userOptional = userService.save(user);
         if (userOptional.isEmpty()) {
             model.addAttribute("message", "Пользователь с таким логином уже существует");

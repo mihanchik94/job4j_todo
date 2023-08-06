@@ -49,7 +49,7 @@
                 <tr th:each="task : ${tasks}">
                     <td th:text="${task.id}"></td>
                     <td><a th:text="${task.title}" th:href="@{/tasks/{taskId}(taskId = ${task.id})}"></a></td>
-                    <td th:text="${task.created}"></td>
+                    <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy, HH:mm')}"></td>
                     <td>
                         <div class="d-flex" th:if="${task.done == false}"><p>В работе</p></div>
                         <div class="d-flex" th:if="${task.done == true}"><p>Выполненная</p></div>

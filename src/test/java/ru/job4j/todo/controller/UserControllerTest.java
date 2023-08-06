@@ -32,22 +32,22 @@ class UserControllerTest {
 
     @Test
     public void whenPostRegisterUserSuccessfullyThenRedirectToFilms() {
-        User user = new User(1, "test", "test", "test");
+        User user = new User(1, "test", "test", "test", "UTC +3");
         when(userService.save(user)).thenReturn(Optional.of(user));
 
         ConcurrentModel model = new ConcurrentModel();
-        String view = userController.register(user, model, request);
+        String view = userController.register(user, "UTC +3", model, request);
 
         assertThat(view).isEqualTo("redirect:/tasks/all");
     }
 
     @Test
     public void whenPostRegisterUserAndFailThenRedirectToErrors() {
-        User user = new User(1, "test", "test", "test");
+        User user = new User(1, "test", "test", "test", "UTC +3");
         when(userService.save(any())).thenReturn(Optional.empty());
 
         ConcurrentModel model = new ConcurrentModel();
-        String view = userController.register(user, model, request);
+        String view = userController.register(user, "UTC +3", model, request);
         Object expectedMessage = model.getAttribute("message");
 
         assertThat(view).isEqualTo("errors/404");
@@ -56,7 +56,7 @@ class UserControllerTest {
 
     @Test
     public void whenPostLoginUserSuccessfullyThenRedirectToFilms() {
-        User user = new User(1, "test", "test", "test");
+        User user = new User(1, "test", "test", "test", "UTC +3");
         when(userService.findByLoginAndPassword(any(), any())).thenReturn(Optional.of(user));
         when(request.getSession()).thenReturn(session);
 
@@ -68,7 +68,7 @@ class UserControllerTest {
 
     @Test
     public void whenPostLoginUserAndFailThenRedirectToFilms() {
-        User user = new User(1, "test", "test", "test");
+        User user = new User(1, "test", "test", "test", "UTC +3");
         when(userService.save(any())).thenReturn(Optional.empty());
 
         ConcurrentModel model = new ConcurrentModel();
