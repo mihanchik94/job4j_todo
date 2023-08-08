@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CategoryRepository {
     Collection<Category> getAll();
-    Collection<Category> getGroupOfCategories(List<Integer> idList);
+    List<Category> getGroupOfCategories(List<Integer> idList);
 }

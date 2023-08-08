@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 
-
 @ThreadSafe
 @Controller
 @AllArgsConstructor
@@ -62,7 +61,7 @@ public class TaskController {
     public String createTask(@ModelAttribute Task task, @RequestParam List<Integer> categoryList, @SessionAttribute User user) {
         task.setUser(user);
         task.setDone(false);
-        task.getCategories().addAll(categoryService.getGroupOfCategories(categoryList));
+        task.setCategories(categoryService.getGroupOfCategories(categoryList));
         taskService.save(task);
         return "redirect:/tasks/all";
     }
@@ -83,7 +82,7 @@ public class TaskController {
     @PostMapping("/update")
     public String update(@ModelAttribute Task task, Model model, @RequestParam List<Integer> categoryList, @SessionAttribute User user) {
         task.setUser(user);
-        task.getCategories().addAll(categoryService.getGroupOfCategories(categoryList));
+        task.setCategories(categoryService.getGroupOfCategories(categoryList));
         boolean isUpdated = taskService.update(task);
         if (!isUpdated) {
             model.addAttribute("message", "Задача с указанным id не найдена");

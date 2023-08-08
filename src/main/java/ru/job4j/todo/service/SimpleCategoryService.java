@@ -21,7 +21,7 @@ public class SimpleCategoryService implements CategoryService {
     }
 
     @Override
-    public Collection<Category> getGroupOfCategories(List<Integer> idList) {
+    public List<Category> getGroupOfCategories(List<Integer> idList) {
         return categoryRepository.getGroupOfCategories(idList);
     }
 }

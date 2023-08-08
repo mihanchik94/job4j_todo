@@ -22,7 +22,7 @@ public class CategoryStore implements CategoryRepository {
     }
 
     @Override
-    public Collection<Category> getGroupOfCategories(List<Integer> idList) {
+    public List<Category> getGroupOfCategories(List<Integer> idList) {
         return crudRepository.query("from Category c where c.id in :categoryIdList",
                 Category.class, Map.of("categoryIdList", idList));
     }

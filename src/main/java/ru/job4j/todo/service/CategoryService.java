@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CategoryService {
     Collection<Category> getAll();
-    Collection<Category> getGroupOfCategories(List<Integer> idList);
+    List<Category> getGroupOfCategories(List<Integer> idList);
 }
